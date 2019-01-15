@@ -1,4 +1,4 @@
-from collections import debque
+from collections import deque
 infinity  = 1000
 class BellmanFord:
     distTo = []
@@ -14,13 +14,19 @@ class BellmanFord:
         self.adj = graph.adj
 
         #add source to queue
+        que.append(source)
         #set onQ for source to true
+        onQ[source] = True
         #while que isnt empty and no negative cycle
+        while len(selque) is not 0:
+
         #(with bellman ford might be able to create a list of all negative cycles)
         #pop from que and set onQ false
+            v = self.que.pop()
         #relax that vertex
+            relax(v)
     
-    def relax(v):
+    def relax(self,v):
         for i in self.adj[v]:
             w = i.edge_to()
             if(distTo[w] > distTo[v] + i.get_weight()):
