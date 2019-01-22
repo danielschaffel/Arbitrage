@@ -1,4 +1,3 @@
-            
 #actual graph api 
 class Digraph:
     #V is the num of vertices in the graph
@@ -13,10 +12,12 @@ class Digraph:
         for i in range(self.V):
             self.adj.append([])
 
+    #adds the given edge to the adjacency list of the edge returned by edge.edge_from
     def add_edge(self,edge):
         self.adj[edge.edge_from()].append(edge)
         self.E += 1
 
+    #returns a list of all adjacent edges
     def get_adj(self,v):
         return self.adj[v]
     
