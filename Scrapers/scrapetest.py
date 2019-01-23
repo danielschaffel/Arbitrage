@@ -48,26 +48,33 @@ def getRates(url):
     #returns all the lists together
     return zip(currName,fromCurr,toCurr)
 
-urlU = "https://www.x-rates.com/table/?from=USD&amount=1"
-urlB = "https://www.x-rates.com/table/?from=GBP&amount=1"
-urlList = [urlU,urlB]
-graph = EdgeWeightedDigraph.Digraph(55)
-for url in urlList:
-    edgeList = []
-    current = re.findall('from=(.+)&am',url)
-    #print(current[0])
-    for (a,b,c) in getRates(url):
-        #print(a,b,c)
-        #edge from current to current from getrates
-        edgeTo = EdgeWeightedDigraph.DirectedEdge(di[current[0]],di[a],b)
-        #other way around
-        edgeFrom = EdgeWeightedDigraph.DirectedEdge(di[a],di[current[0]],c)
-        #print(edgeTo.edge_from(),edgeTo.edge_to(),edgeTo.get_weight())
-        #print(edgeFrom.edge_from(),edgeFrom.edge_to(),edgeFrom.get_weight())
-        graph.add_edge(edgeTo)
-        graph.add_edge(edgeFrom)
+def addToGraph():
+    urlU = "https://www.x-rates.com/table/?from=USD&amount=1"
+    urlB = "https://www.x-rates.com/table/?from=GBP&amount=1"
+    urlList = [urlU,urlB]
+    urlBeginning = "https://www.x-rates.com/table/?from="
+    urlEnd = "&amount=1"
+    graph = EdgeWeightedDigraph.Digraph(55)
+    getRates(urlU)
+    for url in di:
+        
+        current = url
 
-print(di)
-for g in graph.adj:
-    for e in g:
-        print(e.edge_from(),e.edge_to(),e.get_weight())
+        fullUrl = urlBeginning + url + urlEnd
+        #print(current[0])
+        for (a,b,c) in getRates(fullUrl):
+            #print(a,b,c)
+            #edge from current to current from getrates
+            edgeTo = EdgeWeightedDigraph.DirectedEdge(di[current],di[a],b)
+            #other way around
+            edgeFrom = EdgeWeightedDigraph.DirectedEdge(di[a],di[current],c)
+            #print(edgeTo.edge_from(),edgeTo.edge_to(),edgeTo.get_weight())
+            #print(edgeFrom.edge_from(),edgeFrom.edge_to(),edgeFrom.get_weight())
+            graph.add_edge(edgeTo)
+            graph.add_edge(edgeFrom)
+    return graph
+   
+
+for g in addToGraph().adj:
+        for e in g:
+            print(e.edge_from(),e.edge_to(),e.get_weight())
