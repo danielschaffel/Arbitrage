@@ -1,11 +1,13 @@
 import sys
-sys.path.insert(0,'/home/daniel/Desktop/Arbitrage/Structures')
+sys.path.append('/home/daniel/Desktop/Arbitrage/Structures')
 import EdgeWeightedDigraph
+sys.path.append('/home/daniel/Desktop/Arbitrage/CycleDetectors')
+import BellmanFord
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 import re
-from selenium import webdriver
+import math
 
 #di is going to be used to associate each currency with a number for the digraph
 di = {}
@@ -17,7 +19,7 @@ def getRates(url):
 
     #so the link is a BeutifulSoup object so if i want to access just remember that
     #table is the table with all the exchange values
-    table =  bsobj.find("table", class_ = "tablesorter ratesTable")
+    table =  bsobj.find("table", class_ = "ratesTable")
     links = table.findAll('tr')
     #from whatever currency in the table to the currency in the link
     fromCurr = []
@@ -50,31 +52,24 @@ def getRates(url):
 
 def addToGraph():
     urlU = "https://www.x-rates.com/table/?from=USD&amount=1"
-    urlB = "https://www.x-rates.com/table/?from=GBP&amount=1"
-    urlList = [urlU,urlB]
     urlBeginning = "https://www.x-rates.com/table/?from="
     urlEnd = "&amount=1"
-    graph = EdgeWeightedDigraph.Digraph(55)
+    graph = EdgeWeightedDigraph.Digraph(12)
     getRates(urlU)
+    
     for url in di:
-        
         current = url
-
         fullUrl = urlBeginning + url + urlEnd
-        #print(current[0])
+
         for (a,b,c) in getRates(fullUrl):
-            #print(a,b,c)
-            #edge from current to current from getrates
-            edgeTo = EdgeWeightedDigraph.DirectedEdge(di[current],di[a],b)
+            #edge from current to current from getRates
+            edgeTo = EdgeWeightedDigraph.DirectedEdge(di[current],di[a],math.log(float(b)))
             #other way around
-            edgeFrom = EdgeWeightedDigraph.DirectedEdge(di[a],di[current],c)
-            #print(edgeTo.edge_from(),edgeTo.edge_to(),edgeTo.get_weight())
-            #print(edgeFrom.edge_from(),edgeFrom.edge_to(),edgeFrom.get_weight())
+            edgeFrom = EdgeWeightedDigraph.DirectedEdge(di[a],di[current],math.log(float(c)))
             graph.add_edge(edgeTo)
             graph.add_edge(edgeFrom)
     return graph
-   
-
-for g in addToGraph().adj:
-        for e in g:
-            print(e.edge_from(),e.edge_to(),e.get_weight())
+gr = addToGraph()
+print("finished reading from x-rates",gr.get_E(),gr.get_V())
+bf = BellmanFord.BellmanFord(gr,0)
+bf.printDistTo()

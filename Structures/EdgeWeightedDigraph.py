@@ -50,16 +50,16 @@ class DirectedEdge:
     def edge_to(self):
         return self.w
     
-graph = Digraph(3)
-edge1 = DirectedEdge(1,2,1.2)
-edge2 = DirectedEdge(1,3,1.5)
-edge3 = DirectedEdge(2,1,1.7)
+#graph = Digraph(3)
+#edge1 = DirectedEdge(1,2,1.2)
+#edge2 = DirectedEdge(1,3,1.5)
+#edge3 = DirectedEdge(2,1,1.7)
 
-graph.add_edge(edge1)
-graph.add_edge(edge2)
-graph.add_edge(edge3)
-for i in range(len(graph.get_adj(1))):
-    print(graph.get_adj(1)[i].edge_to())
-    print(graph.get_adj(1)[i].get_weight()) 
+#graph.add_edge(edge1)
+#graph.add_edge(edge2)
+#graph.add_edge(edge3)
+#for i in range(len(graph.get_adj(1))):
+#    print(graph.get_adj(1)[i].edge_to())
+#    print(graph.get_adj(1)[i].get_weight()) 
 
-print(graph.get_E())
+#print(graph.get_E())#
