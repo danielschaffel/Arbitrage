@@ -9,11 +9,11 @@ from selenium import webdriver
 
 #di is going to be used to associate each currency with a number for the digraph
 di = {}
-di["USD"] = 1 
+#di["USD"] = 1 
 
 #returns a sequence of name and values
-def getRates():
-    html = urlopen("https://www.x-rates.com/table/?from=USD&amount=1")
+def getRates(url):
+    html = urlopen(url)
     bsobj = BeautifulSoup(html,"html.parser")
 
     
@@ -31,8 +31,13 @@ def getRates():
         name = link.findAll("td")
         #adds all of them into individual lists
         for nam in name:
-            fromCurr.append(name.pop().get_text())
-            toCurr.append(name.pop().get_text())
+            fc = name.pop()
+            tc = name.pop()
+            #extracts the two initials as a tuple but that tuple is returned in a list
+            fcI = re.findall('from=(.+)&amp;to=(.+)\"',str(fc))
+            print(fcI)
+            fromCurr.append(fc.get_text())
+            toCurr.append(tc.get_text())
             cur = name.pop().get_text()
             if cur not in di:
                 di[cur] = len(di) + 1 
@@ -44,5 +49,12 @@ def getRates():
     #returns all the lists together
     return zip(currName,fromCurr,toCurr)
 
-for (a,b,c) in getRates():
+urlU = "https://www.x-rates.com/table/?from=USD&amount=1"
+urlB = "https://www.x-rates.com/table/?from=GBP&amount=1"
+
+for (a,b,c) in getRates(urlU):
     print(a,b,c)
+
+
+print()
+getRates(urlB)
