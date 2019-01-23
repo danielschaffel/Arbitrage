@@ -9,14 +9,12 @@ from selenium import webdriver
 
 #di is going to be used to associate each currency with a number for the digraph
 di = {}
-#di["USD"] = 1 
 
 #returns a sequence of name and values
 def getRates(url):
     html = urlopen(url)
     bsobj = BeautifulSoup(html,"html.parser")
 
-    
     #so the link is a BeutifulSoup object so if i want to access just remember that
     #table is the table with all the exchange values
     table =  bsobj.find("table", class_ = "tablesorter ratesTable")
@@ -33,12 +31,17 @@ def getRates(url):
         for nam in name:
             fc = name.pop()
             tc = name.pop()
+            #this last one contains the title which i dont care about now that extract with regex
+            name.pop()
+
             #extracts the two initials as a tuple but that tuple is returned in a list
-            fcI = re.findall('from=(.+)&amp;to=(.+)\"',str(fc))
-            print(fcI)
+            fcT = re.findall('from=(.+)&amp;to=(.+)\"',str(fc))
+            tcT = re.findall('from=(.+)&amp;to=(.+)\"',str(tc))
+            print(fcT[0][0],fcT[0][1])
+            print(tcT[0][0],tcT[0][1])
             fromCurr.append(fc.get_text())
             toCurr.append(tc.get_text())
-            cur = name.pop().get_text()
+            cur = fcT[0][0]
             if cur not in di:
                 di[cur] = len(di) + 1 
             #currName.append(name.pop().get_text())
