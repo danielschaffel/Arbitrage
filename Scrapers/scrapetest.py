@@ -9,7 +9,7 @@ from selenium import webdriver
 
 #di is going to be used to associate each currency with a number for the digraph
 di = {}
-
+di['USD'] = 0
 #returns a sequence of name and values
 def getRates(url):
     html = urlopen(url)
@@ -37,27 +37,37 @@ def getRates(url):
             #extracts the two initials as a tuple but that tuple is returned in a list
             fcT = re.findall('from=(.+)&amp;to=(.+)\"',str(fc))
             tcT = re.findall('from=(.+)&amp;to=(.+)\"',str(tc))
-            print(fcT[0][0],fcT[0][1])
-            print(tcT[0][0],tcT[0][1])
             fromCurr.append(fc.get_text())
             toCurr.append(tc.get_text())
             cur = fcT[0][0]
+            currName.append(cur)
+            #adds cur initials if not in di
             if cur not in di:
                 di[cur] = len(di) + 1 
-            #currName.append(name.pop().get_text())
-            #currName.append(re.compile())
-    for name,num in di.items():
-        print(name," = ",num)
     
     #returns all the lists together
     return zip(currName,fromCurr,toCurr)
 
 urlU = "https://www.x-rates.com/table/?from=USD&amount=1"
 urlB = "https://www.x-rates.com/table/?from=GBP&amount=1"
+urlList = [urlU,urlB]
+graph = EdgeWeightedDigraph.Digraph(55)
+for url in urlList:
+    edgeList = []
+    current = re.findall('from=(.+)&am',url)
+    #print(current[0])
+    for (a,b,c) in getRates(url):
+        #print(a,b,c)
+        #edge from current to current from getrates
+        edgeTo = EdgeWeightedDigraph.DirectedEdge(di[current[0]],di[a],b)
+        #other way around
+        edgeFrom = EdgeWeightedDigraph.DirectedEdge(di[a],di[current[0]],c)
+        #print(edgeTo.edge_from(),edgeTo.edge_to(),edgeTo.get_weight())
+        #print(edgeFrom.edge_from(),edgeFrom.edge_to(),edgeFrom.get_weight())
+        graph.add_edge(edgeTo)
+        graph.add_edge(edgeFrom)
 
-for (a,b,c) in getRates(urlU):
-    print(a,b,c)
-
-
-print()
-getRates(urlB)
+print(di)
+for g in graph.adj:
+    for e in g:
+        print(e.edge_from(),e.edge_to(),e.get_weight())
